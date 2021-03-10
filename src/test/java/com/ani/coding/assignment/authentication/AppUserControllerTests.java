@@ -3,9 +3,11 @@ package com.ani.coding.assignment.authentication;
 import com.ani.coding.assignment.authentication.controller.AppAuthController;
 import com.ani.coding.assignment.authentication.domain.AppUser;
 import com.ani.coding.assignment.authentication.domain.LoginDto;
+import com.ani.coding.assignment.authentication.exception.AppUserNotFoundException;
 import com.ani.coding.assignment.authentication.repository.AppUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -263,16 +265,10 @@ public class AppUserControllerTests {
     @Test
     @DisplayName("Sign In : Wrong User Name ")
     public void signIn1() throws Exception {
-        AppUser user = new AppUser();
-        user.setUserId(1L);
-        user.setEmail("aaaaa@gg.com");
-        user.setMobile("+6544871252");
-        user.setUserName("dd");
-        user.setPassword("dd");
 
-        final Optional<AppUser> optional = Optional.of(user);
+        final Optional<AppUser> optional = Optional.empty();
 
-        final String userName = "dd1";
+        final String userName = "dd1xcvxv";
         final String password = "dd";
 
         Mockito.when(
@@ -287,23 +283,19 @@ public class AppUserControllerTests {
                         )
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.status().isOk()
+                MockMvcResultMatchers.status().isBadRequest()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.payload.userName", Matchers.not(userName))
+                result -> Assertions.assertTrue(
+                        result.getResolvedException() instanceof AppUserNotFoundException
+                )
         );
     }
 
     @Test
     @DisplayName("Sign In : Wrong Password ")
     public void signIn2() throws Exception {
-        AppUser user = new AppUser();
-        user.setUserId(1L);
-        user.setEmail("aaaaa@gg.com");
-        user.setMobile("+6544871252");
-        user.setUserName("dd");
-        user.setPassword("dd");
 
-        final Optional<AppUser> optional = Optional.of(user);
+        final Optional<AppUser> optional = Optional.empty();
 
         final String userName = "dd";
         final String password = "dd2";
@@ -320,9 +312,11 @@ public class AppUserControllerTests {
                         )
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.status().isOk()
+                MockMvcResultMatchers.status().isBadRequest()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.payload.password", Matchers.not(password))
+                result -> Assertions.assertTrue(
+                        result.getResolvedException() instanceof AppUserNotFoundException
+                )
         );
     }
 }

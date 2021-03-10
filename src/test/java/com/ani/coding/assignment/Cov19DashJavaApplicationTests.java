@@ -14,7 +14,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,7 +34,6 @@ class Cov19DashJavaApplicationTests {
 	@DisplayName("SignUp : Best Case")
 	public void signUp1() throws JsonProcessingException {
 		final AppUser user = new AppUser();
-		user.setUserId(1L);
 		user.setAddress("Xyz Road, Hi Street, Hello Lane 5");
 		user.setState("MH");
 		user.setCity("TUV");
@@ -55,7 +53,6 @@ class Cov19DashJavaApplicationTests {
 	@DisplayName("SignUp : Removing Non Mandatory")
 	public void signUp2() throws JsonProcessingException {
 		final AppUser user = new AppUser();
-		user.setUserId(1L);
 		user.setEmail("dd@gg.com");
 		user.setMobile("+543477098867");
 		user.setUserName("dd1");
@@ -68,7 +65,7 @@ class Cov19DashJavaApplicationTests {
 
 	@Test
 	@DisplayName("SignUp : Email Null")
-	public void signUp3()  {
+	public void signUp3() throws JsonProcessingException {
 		final AppUser user = new AppUser();
 		user.setUserId(1L);
 		user.setMobile("+543477098867");
@@ -76,13 +73,14 @@ class Cov19DashJavaApplicationTests {
 		user.setPassword("dd1#4566$");
 
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signup/", user, String.class);
+
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
 		Assertions.assertTrue(entity.getStatusCode().is4xxClientError());
-		Assertions.assertTrue(Objects.requireNonNull(entity.getBody()).contains("Email is mandatory"));
 	}
 
 	@Test
 	@DisplayName("SignUp : Invalid Email")
-	public void signUp4()  {
+	public void signUp4() throws JsonProcessingException {
 		final AppUser user = new AppUser();
 		user.setUserId(1L);
 		user.setEmail("kjhjh");
@@ -91,13 +89,14 @@ class Cov19DashJavaApplicationTests {
 		user.setPassword("dd1#4566$");
 
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signup/", user, String.class);
+
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
 		Assertions.assertTrue(entity.getStatusCode().is4xxClientError());
-		Assertions.assertTrue(Objects.requireNonNull(entity.getBody()).contains("Need valid email"));
 	}
 
 	@Test
 	@DisplayName("SignUp : Mobile Null")
-	public void signUp5()  {
+	public void signUp5() throws JsonProcessingException {
 		final AppUser user = new AppUser();
 		user.setUserId(1L);
 		user.setEmail("kjhjh@gg.com");
@@ -105,13 +104,14 @@ class Cov19DashJavaApplicationTests {
 		user.setPassword("dd1#4566$");
 
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signup/", user, String.class);
+
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
 		Assertions.assertTrue(entity.getStatusCode().is4xxClientError());
-		Assertions.assertTrue(Objects.requireNonNull(entity.getBody()).contains("Mobile is mandatory"));
 	}
 
 	@Test
 	@DisplayName("SignUp : User Name Null")
-	public void signUp6()  {
+	public void signUp6() throws JsonProcessingException {
 		final AppUser user = new AppUser();
 		user.setUserId(1L);
 		user.setEmail("kjhjh@gg.com");
@@ -119,13 +119,14 @@ class Cov19DashJavaApplicationTests {
 		user.setPassword("dd1#4566$");
 
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signup/", user, String.class);
+
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
 		Assertions.assertTrue(entity.getStatusCode().is4xxClientError());
-		Assertions.assertTrue(Objects.requireNonNull(entity.getBody()).contains("User Name is mandatory"));
 	}
 
 	@Test
 	@DisplayName("SignUp : Password Null")
-	public void signUp7()  {
+	public void signUp7() throws JsonProcessingException {
 		final AppUser user = new AppUser();
 		user.setUserId(1L);
 		user.setEmail("kjhjh@gg.com");
@@ -133,8 +134,9 @@ class Cov19DashJavaApplicationTests {
 		user.setUserName("jhgjhfh");
 
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signup/", user, String.class);
+
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
 		Assertions.assertTrue(entity.getStatusCode().is4xxClientError());
-		Assertions.assertTrue(Objects.requireNonNull(entity.getBody()).contains("Password is mandatory"));
 	}
 
 	@Order(2)
@@ -144,8 +146,7 @@ class Cov19DashJavaApplicationTests {
 		final LoginDto dto = new LoginDto("dd1", "dd1#4566$");
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signin/", dto, String.class);
 
-		ResMsg<Optional<AppUser>> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<Optional<AppUser>>>() {
-		});
+		ResMsg<Optional<AppUser>> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<Optional<AppUser>>>() {});
 		Assertions.assertNotNull(resMsg.getPayload().get());
 	}
 
@@ -156,9 +157,8 @@ class Cov19DashJavaApplicationTests {
 		final LoginDto dto = new LoginDto("dd dd1", "dd1#4566$");
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signin/", dto, String.class);
 
-		ResMsg<Optional<AppUser>> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<Optional<AppUser>>>() {
-		});
-		Assertions.assertFalse(resMsg.getPayload().isPresent());
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
+		Assertions.assertTrue(resMsg.getPayload().contains("User Not Found"));
 	}
 
 	@Order(3)
@@ -168,8 +168,7 @@ class Cov19DashJavaApplicationTests {
 		final LoginDto dto = new LoginDto("dd1", "dd1#4566$ 000");
 		ResponseEntity<String> entity = restTemplate.postForEntity("http://localhost:"+port+"/signin/", dto, String.class);
 
-		ResMsg<Optional<AppUser>> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<Optional<AppUser>>>() {
-		});
-		Assertions.assertFalse(resMsg.getPayload().isPresent());
+		ResMsg<String> resMsg = mapper.readValue(entity.getBody(), new TypeReference<ResMsg<String>>() {});
+		Assertions.assertTrue(resMsg.getPayload().contains("User Not Found"));
 	}
 }

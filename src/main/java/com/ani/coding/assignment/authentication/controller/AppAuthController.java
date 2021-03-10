@@ -2,6 +2,7 @@ package com.ani.coding.assignment.authentication.controller;
 
 import com.ani.coding.assignment.authentication.domain.AppUser;
 import com.ani.coding.assignment.authentication.domain.LoginDto;
+import com.ani.coding.assignment.authentication.exception.AppUserNotFoundException;
 import com.ani.coding.assignment.authentication.repository.AppUserRepository;
 import com.ani.coding.assignment.http.ResMsg;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 @RestController(value = "/user")
+@CrossOrigin
 public class AppAuthController {
 
     @Autowired
@@ -22,6 +24,7 @@ public class AppAuthController {
     @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResMsg<Optional<AppUser>>> signIn(@RequestBody LoginDto dto) {
         Optional<AppUser> optional = repository.signIn(dto.getUserName(),dto.getPassword());
+        optional.orElseThrow(AppUserNotFoundException::new);
         return ResponseEntity.ok(
                 ResMsg.<Optional<AppUser>>builder()
                         .payload(optional)
@@ -30,6 +33,7 @@ public class AppAuthController {
                         .build()
         );
     }
+
 
     @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResMsg<AppUser>> signUp(@RequestBody AppUser user) {
@@ -43,9 +47,15 @@ public class AppAuthController {
         );
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler({AppUserNotFoundException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
-        return ResponseEntity.badRequest().body(""+e.getMessage());
+    public ResponseEntity<ResMsg<String>> handleConstraintViolationException(Exception e) {
+        return ResponseEntity.badRequest().body(
+                ResMsg.<String>builder()
+                        .msg("Exception Generated")
+                        .sts("exception")
+                        .payload(e.getMessage())
+                        .build()
+        );
     }
 }
