@@ -50,10 +50,10 @@ public class AppUserRepoTests {
     @DisplayName("SignUp : Excluding State, City, Address, Gender, Date")
     public void saveUserValidationCheck1() {
         final AppUser user = new AppUser();
-        user.setEmail("dd@gg.com");
-        user.setMobile("+543477098867");
-        user.setUserName("dd1");
-        user.setPassword("dd1#4566$");
+        user.setEmail("dd@gg.comwer");
+        user.setMobile("+543477065498867");
+        user.setUserName("dd6541");
+        user.setPassword("dd154#4566$");
         AppUser saved = repository.save(user);
         entityManager.flush();
         Assertions.assertNotNull(saved);

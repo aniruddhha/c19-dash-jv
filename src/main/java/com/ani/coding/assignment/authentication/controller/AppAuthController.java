@@ -47,7 +47,7 @@ public class AppAuthController {
         );
     }
 
-    @ExceptionHandler({AppUserNotFoundException.class, ConstraintViolationException.class})
+    @ExceptionHandler({AppUserNotFoundException.class, ConstraintViolationException.class, org.hibernate.exception.ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ResMsg<String>> handleConstraintViolationException(Exception e) {
         return ResponseEntity.badRequest().body(

@@ -53,10 +53,10 @@ class Cov19DashJavaApplicationTests {
 	@DisplayName("SignUp : Removing Non Mandatory")
 	public void signUp2() throws JsonProcessingException {
 		final AppUser user = new AppUser();
-		user.setEmail("dd@gg.com");
-		user.setMobile("+543477098867");
-		user.setUserName("dd1");
-		user.setPassword("dd1#4566$");
+		user.setEmail("dasfsafdd@gg.com");
+		user.setMobile("+543477656098867");
+		user.setUserName("ddsdf1");
+		user.setPassword("ddsdfsdf1#4566$");
 
 		String json = restTemplate.postForObject("http://localhost:"+port+"/signup/", user, String.class);
 		ResMsg<AppUser> resUser = mapper.readValue(json, new TypeReference<ResMsg<AppUser>>() {});

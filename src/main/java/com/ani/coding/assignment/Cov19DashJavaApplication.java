@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Cov19DashJavaApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(Cov19DashJavaApplication.class, args);
 	}
-
 }

@@ -24,6 +24,7 @@ public class AppUser {
 
     @NotNull
     @NotBlank(message = "User Name is mandatory")
+    @Column(name = "user_name", unique = true)
     private String userName;
     @NotNull
     @NotBlank(message = "Password is mandatory")
@@ -31,11 +32,13 @@ public class AppUser {
 
     @NotNull
     @NotBlank(message = "Mobile is mandatory")
+    @Column(name = "mobile", unique = true)
     private String mobile;
 
     @Email(message = "Need valid email")
     @NotNull
     @NotBlank(message = "Email is mandatory")
+    @Column(name = "email", unique = true)
     private String email;
 
     private Integer gender;
